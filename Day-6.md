@@ -1,12 +1,11 @@
-## Date:- 10/02/2026
-
-## Day:- Tuesday
+## Date: 2026-02-10
+## Day: Tuesday
 
 ### What did you do yesterday
 
-- Review Git Commands
-- Learn Basic Linux Commands
-- Learn C# Basic
+- Reviewed Git commands
+- Learned basic Linux commands
+- Learned C# basics
 
 ### What will you do today
 
@@ -15,4 +14,4 @@
 
 ### What are you blocked (if at all)
 
-No blockers
+- No blockers

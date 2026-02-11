@@ -2259,17 +2259,6 @@ app.Run();
 
 ---
 
-## Common Mistakes to Avoid
-
-❌ Using Singleton lifetime for DbContext
-❌ Blocking async calls with `.Result` or `.Wait()`
-❌ Hardcoding configuration values
-❌ Putting business logic inside controllers/endpoints
-❌ Ignoring service lifetimes
-❌ Mixing concerns across layers
-
----
-
 ## Mental Model Summary
 
 | Concept   | Purpose                           |
@@ -2831,21 +2820,6 @@ Refactor when you notice:
 
 ---
 
-## Best Practices Checklist
-
-✅ Move endpoints into extension classes
-✅ Use route groups for related endpoints
-✅ Create mapping extensions for Entity ↔ DTO
-✅ Keep service layer clean and focused
-✅ Enable CORS for frontend integration
-✅ Return structured, consistent errors
-✅ Maintain stable DTO contracts
-✅ Keep `Program.cs` minimal and readable
-✅ Use proper HTTP status codes
-✅ Never expose entities directly to API consumers
-
----
-
 ## Complete File Structure Example
 
 ```
@@ -2884,13 +2858,13 @@ GameStore.Api/
 
 ## Quick Reference: Adding New Entity
 
-**1. Create Entity** (`Entities/Product.cs`)
-**2. Create DTOs** (`Dtos/ProductDto.cs`, `CreateProductDto.cs`)
-**3. Add DbSet** to `AppDbContext`
-**4. Create Service** (`Services/ProductService.cs`)
-**5. Create Mapping Extensions** (`Extensions/MappingExtensions.cs`)
-**6. Create Endpoints** (`Extensions/ProductEndpoints.cs`)
-**7. Register Service** in `Program.cs`
-**8. Map Endpoints** in `Program.cs`
-**9. Run Migration** (`dotnet ef migrations add AddProduct`)
-**10. Update Database** (`dotnet ef database update`)
+1. Create entity (`Entities/Product.cs`)
+2. Create DTOs (`Dtos/ProductDto.cs`, `CreateProductDto.cs`)
+3. Add `DbSet` to `AppDbContext`
+4. Create service (`Services/ProductService.cs`)
+5. Create mapping extensions (`Extensions/MappingExtensions.cs`)
+6. Create endpoints (`Extensions/ProductEndpoints.cs`)
+7. Register service in `Program.cs`
+8. Map endpoints in `Program.cs`
+9. Run migration (`dotnet ef migrations add AddProduct`)
+10. Update database (`dotnet ef database update`)
