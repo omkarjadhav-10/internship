@@ -245,58 +245,12 @@ GET https://localhost:7001/hello
 
 ---
 
-## 11. Common Mistakes to Avoid
-
-❌ **Running in wrong folder** - Always run in folder containing `.csproj`
-
-❌ **Using wrong URL/port** - Check terminal output for correct URL
-
-❌ **Manually editing bin/ or obj/** - Never do this
-
-❌ **HTTPS certificate issues** - Trust certificates if needed:
-
-```bash
-dotnet dev-certs https --trust
-```
-
----
-
-## 12. Professional Tips
-
-✅ Always use CLI for project operations
-
-✅ Learn core commands by heart
-
-✅ Keep SDK updated but stick to LTS for team projects
-
-✅ Read build errors carefully - never ignore them
-
----
-
 ## Quick Reference
 
 ```bash
 # Create new console app
 dotnet new console -n MyApp
 
-# Create new Web API
-dotnet new webapi -n MyApi
-
-# Build project
-dotnet build
-
-# Run project
-dotnet run
-
-# Add package
-dotnet add package PackageName
-
-# List packages
-dotnet list package
-
-# Trust HTTPS certificates
-dotnet dev-certs https --trust
-```
 
 # REST API Fundamentals (.NET Web API)
 
