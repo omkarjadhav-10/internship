@@ -1,13 +1,16 @@
-Date:- 05/02/2025
+#### Date:- 05/02/2025
 
-### __What did you do yesterday__
-* Completed learning Git Commands
-* Reviewed reference materials and tutorials
-* Learn Git BranchingPractice creating, switching, and merging branches
+### **What did you do yesterday**
 
-### __What will you do today__
-* Create a repository to simulate Git commands
-* Learn Linux Commands
+- Completed learning Git Commands
+- Reviewed reference materials and tutorials
+- Learn Git BranchingPractice creating, switching, and merging branches
 
-### __What are you blocked (if at all)__
-* No blockers
+### **What will you do today**
+
+- Create a repository to simulate Git commands
+- Learn Linux Commands
+
+### **What are you blocked (if at all)**
+
+- No blockers
