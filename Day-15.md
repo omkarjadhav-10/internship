@@ -1,3 +1,7 @@
+### Date:- 23/02/2026
+
+### Day:- Monday
+
 ### What did you do yesterday
 
 - Setup project with the help of @Pranav

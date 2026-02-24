@@ -1,3 +1,7 @@
+### Date:- 24/02/2026
+
+### Day:- Tuesday
+
 ### What did you do yesterday
 
 - Understand the overall project structure and its functionalities.
