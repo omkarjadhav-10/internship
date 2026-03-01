@@ -1,0 +1,207 @@
+  Plan: Add Search Functionality for Global Field Groups
+
+     Context
+
+     Users need to search through global field groups by name inside FieldGroupPanel. The existing GET /v1/template-field-groups?isGlobal=true endpoint is reused — no new endpoint is
+     introduced. The change is purely additive: an optional search query parameter filters results server-side via a case-insensitive partial match, and the frontend debounces the
+     input before calling the API.
+
+     ---
+     Architecture Analysis
+
+     Backend
+
+     - Pattern: NestJS Controller → Service (TypeORM QueryBuilder) — no separate repository class
+     - Query DTO: dto/template-field-group-query.dto.ts
+     - Service method: findAll() in template-field-groups.service.ts
+     - DB column: name (varchar 200) on template_field_groups table
+
+     Frontend
+
+     - Panel: src/components/designer/FieldGroupPanel.jsx (1,442 lines)
+     - API service: src/api/services/templateFieldGroupService.js — getGlobalFieldGroups()
+     - Debounce: useDebouncedValue from @mantine/hooks (already used in TemplateList.jsx, 500ms)
+     - Reusable search input: src/components/common/SearchInput.jsx (Mantine TextInput + search icon)
+
+     ---
+     Backend Changes
+
+     1. Add search to the Query DTO
+
+     File: reportbuilder-api-ddp/src/modules/template-field-groups/dto/template-field-group-query.dto.ts
+
+     Add after the isGlobal field:
+     @ApiPropertyOptional({
+       description: 'Search field groups by name (partial match, case-insensitive)',
+       example: 'Patient',
+     })
+     @IsOptional()
+     @IsString()
+     search?: string;
+
+     Backward compatibility: @IsOptional() means existing callers that omit search are unaffected.
+
+     2. Add LIKE filter in Service findAll()
+
+     File: reportbuilder-api-ddp/src/modules/template-field-groups/template-field-groups.service.ts
+
+     Destructure search from query and add a conditional andWhere clause immediately after the existing isGlobal filter block:
+     const { page = 1, limit = 10, isGlobal, search } = query;
+
+     // ... existing isGlobal block unchanged ...
+
+     if (search?.trim()) {
+       queryBuilder.andWhere('LOWER(fieldGroup.name) LIKE LOWER(:search)', {
+         search: `%${search.trim()}%`,
+       });
+       addSpanEvent('Applied search filter', { search: search.trim() });
+     }
+
+     SQL comparison:
+     -- Before (isGlobal=true, no search):
+     WHERE fieldGroup.is_global = true
+
+     -- After (isGlobal=true, search="Patient"):
+     WHERE fieldGroup.is_global = true
+       AND LOWER(fieldGroup.name) LIKE LOWER('%Patient%')
+
+     No pagination logic is touched. addSpanAttributes already includes query.is_global; no additional span attributes needed beyond the event.
+
+     3. Add Service Unit Tests
+
+     File: reportbuilder-api-ddp/src/modules/template-field-groups/template-field-groups.service.spec.ts
+
+     Add three test cases inside the findAll describe block:
+     - search provided → andWhere called with correct LIKE pattern
+     - search whitespace-only → treated as empty, no andWhere for search
+     - search not provided → existing behavior unchanged (no extra andWhere)
+
+     ---
+     Frontend Changes
+
+     4. Update getGlobalFieldGroups to accept optional search
+
+     File: reportbuilder-ui-ddp/src/api/services/templateFieldGroupService.js
+
+     getGlobalFieldGroups: (search) => {
+       const params = { isGlobal: true, limit: 100 };
+       if (search?.trim()) {
+         params.search = search.trim();
+       }
+       return get("/v1/template-field-groups", { params });
+     },
+
+     Existing callers that pass no argument continue to work identically.
+
+     5. Update FieldGroupPanel.jsx
+
+     File: reportbuilder-ui-ddp/src/components/designer/FieldGroupPanel.jsx
+
+     a) Add import at top of file:
+     import { useDebouncedValue } from '@mantine/hooks'
+     import { SearchInput } from '../common/SearchInput'
+
+     b) Add state + debounce inside the component (near other isLoading* state declarations):
+     const [globalSearch, setGlobalSearch] = useState('')
+     const [debouncedGlobalSearch] = useDebouncedValue(globalSearch, 500)
+
+     c) Update loadGlobalFieldGroups to accept and forward search:
+     const loadGlobalFieldGroups = async (search = '') => {
+       setIsLoadingGlobal(true)
+       setGlobalLoadError(null)
+       try {
+         const response = await templateFieldGroupService.getGlobalFieldGroups(search)
+         // ... existing response normalization logic unchanged ...
+         setGlobalFieldGroups(Array.isArray(groups) ? groups : [])
+       } catch (error) {
+         setGlobalLoadError(error.message || 'Failed to load global field groups')
+       } finally {
+         setIsLoadingGlobal(false)
+       }
+     }
+
+     d) Add useEffect for debounced search (after the existing useEffect blocks):
+     useEffect(() => {
+       if (isOpen && versionId) {
+         loadGlobalFieldGroups(debouncedGlobalSearch)
+       }
+     }, [debouncedGlobalSearch, isOpen, versionId])
+
+     e) Reset search on panel close — update the existing isOpen effect:
+     useEffect(() => {
+       if (isOpen && versionId) {
+         setGlobalSearch('')        // reset search when panel opens
+         loadGlobalFieldGroups()
+       }
+     }, [isOpen, versionId])
+
+     Note: the existing effect still handles initial load on open. The debounced effect handles subsequent search changes. Both call loadGlobalFieldGroups, which is idempotent.
+
+     f) Add search input UI — place the <SearchInput> immediately above the global field groups list (where isLoadingGlobal, globalLoadError, and globalFieldGroups.map(...) render):
+     <SearchInput
+       value={globalSearch}
+       onChange={(e) => setGlobalSearch(e.target.value)}
+       placeholder="Search global field groups"
+       style={{ marginBottom: '12px' }}
+     />
+
+     ---
+     Edge Cases
+
+     ┌───────────────────────────────┬───────────────────────────────────────────────────────────────────────────────┐
+     │             Case              │                                   Behavior                                    │
+     ├───────────────────────────────┼───────────────────────────────────────────────────────────────────────────────┤
+     │ search cleared by user        │ Debounce fires with '' → API called without search param → full list returned │
+     ├───────────────────────────────┼───────────────────────────────────────────────────────────────────────────────┤
+     │ Whitespace-only input         │ trim() on both ends → treated as empty → no filter applied                    │
+     ├───────────────────────────────┼───────────────────────────────────────────────────────────────────────────────┤
+     │ Rapid typing                  │ Debounce (500ms) prevents API storm                                           │
+     ├───────────────────────────────┼───────────────────────────────────────────────────────────────────────────────┤
+     │ Panel reopened                │ globalSearch reset to '', fresh load triggered                                │
+     ├───────────────────────────────┼───────────────────────────────────────────────────────────────────────────────┤
+     │ isLoadingGlobal during search │ Spinner displayed, same as current loading state                              │
+     ├───────────────────────────────┼───────────────────────────────────────────────────────────────────────────────┤
+     │ API error during search       │ globalLoadError set, retry button available (existing behavior)               │
+     ├───────────────────────────────┼───────────────────────────────────────────────────────────────────────────────┤
+     │ No matches found              │ Existing empty state renders (no changes needed)                              │
+     └───────────────────────────────┴───────────────────────────────────────────────────────────────────────────────┘
+
+     ---
+     Backward Compatibility Guarantee
+
+     - search is @IsOptional() in DTO → callers omitting it get identical behavior
+     - getGlobalFieldGroups() with no argument → params.search is never added → same HTTP request as today
+     - Response shape (PaginatedTemplateFieldGroupsDto) is unchanged
+     - Existing pagination logic (page, limit) is untouched
+     - addWhere for isGlobal executes independently of search
+
+     ---
+     Files to Modify
+
+     ┌───────────────────────────────────────────────────────────────────────────────────────────────┬───────────────────────────────────────┐
+     │                                             File                                              │                Change                 │
+     ├───────────────────────────────────────────────────────────────────────────────────────────────┼───────────────────────────────────────┤
+     │ reportbuilder-api-ddp/src/modules/template-field-groups/dto/template-field-group-query.dto.ts │ Add search?: string field             │
+     ├───────────────────────────────────────────────────────────────────────────────────────────────┼───────────────────────────────────────┤
+     │ reportbuilder-api-ddp/src/modules/template-field-groups/template-field-groups.service.ts      │ Add LIKE filter in findAll()          │
+     ├───────────────────────────────────────────────────────────────────────────────────────────────┼───────────────────────────────────────┤
+     │ reportbuilder-api-ddp/src/modules/template-field-groups/template-field-groups.service.spec.ts │ Add 3 search test cases               │
+     ├───────────────────────────────────────────────────────────────────────────────────────────────┼───────────────────────────────────────┤
+     │ reportbuilder-ui-ddp/src/api/services/templateFieldGroupService.js                            │ Update getGlobalFieldGroups signature │
+     ├───────────────────────────────────────────────────────────────────────────────────────────────┼───────────────────────────────────────┤
+     │ reportbuilder-ui-ddp/src/components/designer/FieldGroupPanel.jsx                              │ Add state, debounce, UI input         │
+     └───────────────────────────────────────────────────────────────────────────────────────────────┴───────────────────────────────────────┘
+
+     ---
+     Verification
+
+     1. Backend unit tests: Run template-field-groups.service.spec.ts — all existing + 3 new tests pass
+     2. Manual API test:
+       - GET /v1/template-field-groups?isGlobal=true → unchanged paginated response
+       - GET /v1/template-field-groups?isGlobal=true&search=Pat → only groups with "pat" in name returned
+       - GET /v1/template-field-groups?isGlobal=true&search= → same as no search param
+     3. Frontend smoke test:
+       - Open FieldGroupPanel → search input renders in global section
+       - Type "Patient" → 500ms later, filtered results appear
+       - Clear input → full global list reloads
+       - Close and reopen panel → search is reset, full list loads
