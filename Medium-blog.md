@@ -1,4 +1,4 @@
-# How I Set Up My Developer Terminal on Windows 11 (From Basic to Pro)
+# How I Set Up My Developer Terminal on Windows 11 
 
 ---
 
@@ -6,7 +6,7 @@
 
 It was my first week as a software engineering intern. I'd just gotten my Windows 11 machine set up, cloned the company repo, and opened PowerShell for the first time. The prompt just said `PS C:\Users\Omkar>`. That was it. No color. No branch name. No hints about what I was doing or where I was.
 
-I typed `git status` and got a wall of white text. I ran `ls` and got a basic list with no icons, no sizes that made sense, nothing useful. I looked over at a senior dev's screen during a meeting — his terminal looked like a different application entirely. Colors everywhere, git branch in the prompt, icons next to file names, autocomplete suggestions appearing as he typed.
+I typed `git status` and got a wall of white text. I ran `ls` and got a basic list with no icons, no sizes that made sense, nothing useful. I looked over at a senior dev's screen during a meeting, his terminal looked like a different application entirely. Colors everywhere, git branch in the prompt, icons next to file names, autocomplete suggestions appearing as he typed.
 
 I asked him what he was using. He said, "Same PowerShell, just configured properly." That sentence stuck with me. Same tool. Completely different experience. That's when I decided to actually set up my environment properly.
 
@@ -14,7 +14,7 @@ I asked him what he was using. He said, "Same PowerShell, just configured proper
 
 ## Who Is This For?
 
-If you're a developer on Windows 11 who's still using the default PowerShell prompt with no customization — this is for you. Especially if you're an intern or a new developer setting up your first real dev machine. It's also useful if you've been meaning to improve your terminal setup but didn't know where to start or what tools to even look for.
+If you're a developer on Windows 11 who's still using the default PowerShell prompt with no customization, this is for you. Especially if you're an intern or a new developer setting up your first real dev machine. It's also useful if you've been meaning to improve your terminal setup but didn't know where to start or what tools to even look for.
 
 You don't need to be experienced. You just need about 45 minutes and a willingness to tweak things.
 
@@ -26,12 +26,12 @@ Nothing is technically broken with the default Windows terminal. But here's what
 
 - PowerShell 5 (the default) is old. PowerShell 7 exists and it's faster, more compatible, and actively maintained.
 - There's no git branch in the prompt, so you're constantly typing `git branch` to figure out where you are.
-- There's no autosuggestions — meaning you re-type the same long commands every single day.
+- There's no autosuggestions, meaning you re-type the same long commands every single day.
 - No syntax highlighting, so you can't tell if you've made a typo until you actually run the command.
 - Navigation is painful. The built-in `ls` and `cd` commands are basic.
 - No icons on files. No shortcuts for Docker, npm, or git.
 
-None of these are dealbreakers individually. Together, they add up to a lot of friction — and friction kills focus.
+None of these are dealbreakers individually. Together, they add up to a lot of friction and friction kills focus.
 
 ---
 
@@ -39,7 +39,7 @@ None of these are dealbreakers individually. Together, they add up to a lot of f
 
 Before jumping to the steps, it's worth understanding what we're building toward. A well-configured terminal has a few distinct layers.
 
-First, you have a modern shell — PowerShell 7 instead of the ancient version that ships with Windows. Then you have a smart themed prompt (Oh My Posh) that shows you git branch, folder path, Node version, and time at a glance. The font matters too — icons in the terminal require a Nerd Font, otherwise you just get broken squares everywhere. Then there are modern CLI replacements: tools like `eza` instead of `ls`, `bat` instead of `cat`, `zoxide` instead of constantly typing full paths. And finally, autosuggestions and syntax highlighting baked into your shell profile.
+First, you have a modern shell, PowerShell 7 instead of the ancient version that ships with Windows. Then you have a smart themed prompt (Oh My Posh) that shows you git branch, folder path, Node version, and time at a glance. The font matters too; icons in the terminal require a Nerd Font, otherwise you just get broken squares everywhere. Then there are modern CLI replacements: tools like `eza` instead of `ls`, `bat` instead of `cat`, `zoxide` instead of constantly typing full paths. And finally, autosuggestions and syntax highlighting baked into your shell profile.
 
 It sounds like a lot. But each piece is simple to add, and they all work together.
 
@@ -51,7 +51,7 @@ This is the actual step-by-step walkthrough from my setup. I've included every c
 
 ---
 
-### Step 1 — Install PowerShell 7
+### Step 1 - Install PowerShell 7
 
 Windows 11 comes with PowerShell 5 baked in. It works, but it's old — think of it as the terminal equivalent of running IE11. PowerShell 7 (you'll see it called `pwsh`) is the modern, actively maintained version. It's faster, more compatible, and required for Oh My Posh to work properly.
 
@@ -71,7 +71,7 @@ You should see something like `PowerShell 7.5.x`. If you see that, you're good.
 
 Now set it as your default. Open Windows Terminal Settings with `Ctrl + ,`, click "Startup" in the sidebar, and change the Default profile to PowerShell 7. Hit Save.
 
-> **Tip:** From this point forward, always use PowerShell 7 — not the old "Windows PowerShell" entry in the dropdown. They look similar but they're different shells.
+> **Tip:** From this point forward, always use PowerShell 7, not the old "Windows PowerShell" entry in the dropdown. They look similar but they're different shells.
 
 ---
 
@@ -79,7 +79,7 @@ Now set it as your default. Open Windows Terminal Settings with `Ctrl + ,`, clic
 
 Oh My Posh is what transforms your boring prompt into something actually useful. It shows your current folder, git branch, Node.js version, last command timing — all right there in the prompt, color-coded and readable.
 
-For this step, close any Administrator windows. Open a fresh Windows Terminal without right-clicking — just a regular user session. Then run:
+For this step, close any Administrator windows. Open a fresh Windows Terminal without right-clicking, just a regular user session. Then run:
 
 ```powershell
 winget install JanDeDobbeleer.OhMyPosh -s winget
@@ -105,7 +105,7 @@ $env:POSH_THEMES_PATH = "$env:LOCALAPPDATA\Programs\oh-my-posh\themes"
 Get-ChildItem $env:POSH_THEMES_PATH | Measure-Object
 ```
 
-You should see a `Count` of 150 or higher. If it shows 0, something went wrong with the download — run the three commands again.
+You should see a `Count` of 150 or higher. If it shows 0, something went wrong with the download run the three commands again.
 
 ---
 
@@ -129,7 +129,7 @@ Now go set it in Windows Terminal. Press `Ctrl + ,` to open Settings, find "Powe
 MesloLGS Nerd Font Mono
 ```
 
-Set the font size to 13. Save. Then fully close and reopen Windows Terminal — not just a new tab, actually close it. When it opens again, the icons should render properly.
+Set the font size to 13. Save. Then fully close and reopen Windows Terminal. When it opens again, the icons should render properly.
 
 > **Watch out:** If Windows Terminal refuses to open after changing the font, the font name was entered incorrectly. Navigate to:
 > `C:\Users\YourUsername\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\`
@@ -306,7 +306,7 @@ Now instead of typing `git status` fifty times a day, it's just `gs`. Instead of
 - Smart navigation with zoxide
 - Production shortcuts for git, Docker, and npm
 
-The difference in feel is significant. It's not just prettier — it's faster and less mentally taxing.
+The difference in feel is significant. It's not just prettier, it's faster and less mentally taxing.
 
 ---
 
@@ -316,9 +316,9 @@ Setting this up took me about 45 minutes total. But since then, I've saved that 
 
 There's something else though. A well-configured environment changes how you feel about working. When your tools are clean and responsive, you feel more like a professional using them. There's less friction between what you want to do and actually doing it.
 
-Developers — especially early-career developers — tend to underestimate the terminal. It's easy to think of it as just a box you type commands into. But you're in there for hours every day. How it looks and feels actually matters.
+Developers, especially early-career developers tend to underestimate the terminal. It's easy to think of it as just a box you type commands into. But you're in there for hours every day. How it looks and feels actually matters.
 
 ---
 
 > **Your terminal is where you spend hours every day.**
-> Treat it like a professional workspace — not just a default window.
+> Treat it like a professional workspace not just a default window.
