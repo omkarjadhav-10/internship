@@ -22,26 +22,26 @@ You don't need to be experienced. You just need about 45 minutes and a willingne
 
 ## What's Wrong With the Default Setup?
 
-Nothing is technically broken with the default Windows terminal. But here's what you're missing:
+Nothing is technically broken with the default Windows terminal. But here are some missing features :
 
 - PowerShell 5 (the default) is old. PowerShell 7 is faster, more compatible, and actively maintained.
 - There's no git branch in the prompt, so you're constantly typing `git branch` to figure out where you are.
 - There's no autosuggestions, meaning you re-type the same long commands every single day.
 - No syntax highlighting, so you can't tell if you've made a typo until you actually run the command.
 
-None of these are a big deal individually. Together, they add up to a lot of friction and friction kills focus.
+None of these are major problems individually, but together they add a lot of friction.
 
 ---
 
 ## What a Professional Terminal Actually Looks Like
 
-Before jumping to the steps, it's worth understanding what we're building.
+Before jumping to the steps, it is good to know what we're building.
 
 First, you have a modern shell, PowerShell 7 instead of the windows default PowerShell 5. Then you have a smart themed prompt (Oh My Posh) that shows you git branch, folder path, Node version, and time at a glance. The font matters too; icons in the terminal require a Nerd Font, otherwise you just get broken squares everywhere. Then there are modern CLI replacements: tools like `eza` instead of `ls`, `bat` instead of `cat`, `zoxide` instead of constantly typing full paths. And finally, autosuggestions and syntax highlighting which makes you type less and mess up less.
 
 ---
 
-## Let's Build It
+## Let's Start Build It
 
 This is the actual step-by-step walkthrough from my setup. I've included every command in the right order, plus a couple of moments where things went sideways and how I fixed them.
 
@@ -309,7 +309,7 @@ The difference in feel is significant. It's not just prettier, it's faster and s
 
 Setting this up took me about 45 minutes total. But since then, I've saved that time back many times over just from faster navigation and fewer repeated commands.
 
-There's something else though. A well-configured environment changes how you feel about working. When your tools are clean and responsive, you feel more like a professional using them. There's less friction between what you want to do and actually doing it.
+There's something else though. A well-configured environment changes how you feel about working.It’s easier to do what you want to do. You do what you want in minimal steps.
 
 Developers, especially early-career developers tend to underestimate the terminal. It's easy to think of it as just a box you type commands into. But you're in there for hours every day. How it looks and feels actually matters.
 
