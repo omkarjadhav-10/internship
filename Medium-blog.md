@@ -6,7 +6,7 @@
 
 That was my first week as a software engineering intern. I'd just gotten my Windows 11 machine set up, cloned the company repo, and opened PowerShell for the first time. The prompt just said `PS C:\Users\Omkar>`. No color. No branch name. No hints about what I was doing or where I was.
 
-I typed `git status` and got a everything in white text. I ran `ls` and got a basic list with no icons, no sizes that made sense, nothing useful. I looked over at a senior dev's screen during a explaning some things to me, his terminal looked like a different application entirely. Colors commands, git branch in the prompt, icons next to file names, autocomplete suggestions appearing as he typed.
+I typed `git status` and got everything in white text. I ran `ls` and got a basic list with no icons, no sizes that made sense, nothing useful. I looked over at a senior dev's screen during explaning some things to me, his terminal looked like a different application entirely. Colors commands, git branch in the prompt, icons next to file names, autocomplete suggestions appearing as he typed.
 
 I asked him what he was using. He said, "Same PowerShell, just configured properly." That sentence stuck with me. Same tool. Completely different experience. That's when I decided to actually set up my terminal properly.
 
@@ -29,7 +29,7 @@ Nothing is technically broken with the default Windows terminal. But here's what
 - There's no autosuggestions, meaning you re-type the same long commands every single day.
 - No syntax highlighting, so you can't tell if you've made a typo until you actually run the command.
 
-None of these are big deal individually. Together, they add up to a lot of friction and friction kills focus.
+None of these are a big deal individually. Together, they add up to a lot of friction and friction kills focus.
 
 ---
 
