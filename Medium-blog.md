@@ -280,7 +280,7 @@ function nd { npm run dev }
 function nb { npm run build }
 ```
 
-Now instead of typing `git status` fifty times a day, it's just `gs`. Instead of `docker compose up -d`, it's `dcu`. These feel like small wins, but they compound over weeks.
+Now instead of typing `git status` fifty times a day, it's just `gs`. Instead of `docker compose up -d`, it's `dcu`. This things are small but very useful and can save your lot of time.
 
 ---
 
